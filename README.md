@@ -1,8 +1,6 @@
 # Slitherlink (Loopy) – Human vs Greedy CPU
 
-This project is a Python implementation of the classic **Slitherlink (Loopy)** logic puzzle using **graph representation** and a **greedy algorithm**, with an interactive **Tkinter GUI**.
-
-The game allows a **human player** to play against a **Greedy CPU**, where the CPU applies local forced rules to make decisions.
+This project is a Python implementation of the classic **Slitherlink (Loopy)** logic puzzle using **graph representation** and a **greedy algorithm**, with an interactive **Tkinter GUI**. The game allows a **human player** to play against a **Greedy CPU**, where the CPU applies local forced rules to make decisions.
 
 ---
 
@@ -47,11 +45,11 @@ The implementation is logically divided into three main parts:
 - Handles undo and redo operations.
 
 ### 3. Greedy CPU
+
 The CPU makes **one move per turn** using:
-1. **Forced completion rule**  
-   If a numbered cell has `k-1` selected edges and only one valid edge left, that edge is selected.
-2. **Fallback rule**  
-   Selects a valid unblocked edge, prioritizing edges near higher-numbered cells.
+
+1. **Forced completion rule**: If a numbered cell has `k-1` selected edges and only one valid edge left, that edge is selected.
+2. **Fallback rule**: Selects a valid unblocked edge, prioritizing edges near higher-numbered cells.
 
 ⚠️ This is a **pure greedy approach** and does not guarantee a complete solution for all puzzles.
 
@@ -74,7 +72,7 @@ The CPU makes **one move per turn** using:
 ## Keyboard Shortcuts
 
 | Shortcut | Action |
-|--------|-------|
+|----------|--------|
 | Ctrl + N | New Game |
 | Ctrl + R | Restart Game |
 | Ctrl + Z | Undo |
@@ -92,33 +90,31 @@ The CPU makes **one move per turn** using:
 ### Run Command
 ```bash
 python main.py
+```
 
-Individual Contributions
+---
 
-Shiva Shanmugan S S – Graph & Utility Functions
+## Individual Contributions
 
-Designed Node and Edge classes
+**Shiva Shanmugan S S – Graph & Utility Functions**
+- Designed Node and Edge classes
+- Implemented adjacency list representation
+- Developed helper utilities such as edge normalization and adjacency checks
 
-Implemented adjacency list representation
+**Shri Aishwarya P – Game Model & Constraints**
+- Implemented the GameModel class
+- Enforced Slitherlink rules and blocking logic
+- Added undo/redo functionality using stacks
+- Managed game state and board reset logic
 
-Developed helper utilities such as edge normalization and adjacency checks
+**Sania S – Greedy Algorithm & UI**
+- Designed and implemented the Greedy CPU strategy
+- Integrated automatic CPU moves after each human move
+- Built the Tkinter-based user interface
+- Added visual feedback, controls, and keyboard shortcuts
 
-Shri Aishwarya P – Game Model & Constraints
+---
 
-Implemented the GameModel class
+## License
 
-Enforced Slitherlink rules and blocking logic
-
-Added undo/redo functionality using stacks
-
-Managed game state and board reset logic
-
-Sania S – Greedy Algorithm & UI
-
-Designed and implemented the Greedy CPU strategy
-
-Integrated automatic CPU moves after each human move
-
-Built the Tkinter-based user interface
-
-Added visual feedback, controls, and keyboard shortcuts
+This project is for educational purposes.
