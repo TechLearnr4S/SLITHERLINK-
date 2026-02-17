@@ -151,3 +151,17 @@ class GameModel:
         edge.selected = action["new"]
         self.action_stack.append(action)
         return action
+    
+    def reset_edges(self):
+        for e in self.edges_list:
+            e.selected = 0
+        self.action_stack.clear()
+        self.redo_stack.clear()
+
+    def new_game(self, rows=None, cols=None):
+        if rows: self.rows = rows
+        if cols: self.cols = cols
+        self.cell_numbers = generate_random_cell_numbers(self.rows, self.cols)
+        self._build_graph()
+        self.action_stack.clear()
+        self.redo_stack.clear()
