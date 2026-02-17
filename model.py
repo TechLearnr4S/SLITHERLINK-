@@ -128,3 +128,26 @@ class GameModel:
         self.action_stack.append({"edge":edge,"prev":0,"new":1,"actor":"CPU"})
         self.redo_stack.clear()
         return True
+    def can_undo(self):
+        return len(self.action_stack) > 0
+
+    def can_redo(self):
+        return len(self.redo_stack) > 0
+
+    def undo(self):
+        if not self.can_undo():
+            return None
+        action = self.action_stack.pop()
+        edge = action["edge"]
+        edge.selected = action["prev"]
+        self.redo_stack.append(action)
+        return action
+
+    def redo(self):
+        if not self.can_redo():
+            return None
+        action = self.redo_stack.pop()
+        edge = action["edge"]
+        edge.selected = action["new"]
+        self.action_stack.append(action)
+        return action
