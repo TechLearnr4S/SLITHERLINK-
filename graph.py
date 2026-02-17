@@ -70,6 +70,6 @@ def generate_random_cell_numbers(rows, cols, blank_probability=0.4):
                     if r <= cumulative:
                         picked = vals[i]
                         break
-            row.append(picked)
-            numbers.append(row)
+                row.append(picked)
+        numbers.append(row)
     return numbers
