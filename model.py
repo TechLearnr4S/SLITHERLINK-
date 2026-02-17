@@ -58,6 +58,10 @@ class GameModel:
 
     def count_selected_edges_around_cell(self, r, c):
         return sum(e.selected for e in self.edges_for_cell(r,c))
+    
+    def all_edges(self):
+        """Return all Edge objects in deterministic order."""
+        return list(self.edges_list)
 
     # ---------------------------
     # Blocking logic
