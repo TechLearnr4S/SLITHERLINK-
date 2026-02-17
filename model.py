@@ -165,3 +165,9 @@ class GameModel:
         self._build_graph()
         self.action_stack.clear()
         self.redo_stack.clear()
+
+    def unselected_edges(self):
+        return [e for e in self.edges_list if e.selected == 0 and not self.is_edge_blocked(e)]
+
+    def unselected_edges_around_cell(self, r, c):
+        return [e for e in self.edges_for_cell(r, c) if e.selected == 0 and not self.is_edge_blocked(e)]
