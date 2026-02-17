@@ -57,7 +57,19 @@ def generate_random_cell_numbers(rows, cols, blank_probability=0.4):
             if random.random() < blank_probability:
                 row.append(None)
             else:
-                row.append(random.choices([0,1,2,3],
-                           weights=[0.1,0.2,0.4,0.3])[0])
-        numbers.append(row)
+                vals = [0, 1, 2, 3]
+                weights = [0.1, 0.2, 0.4, 0.3]
+                total = 0.0
+                for w in weights:
+                    total += w
+                r = random.random() * total
+                cumulative = 0.0
+                picked = vals[-1]
+                for i in range(len(vals)):
+                    cumulative += weights[i]
+                    if r <= cumulative:
+                        picked = vals[i]
+                        break
+            row.append(picked)
+            numbers.append(row)
     return numbers
