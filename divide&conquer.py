@@ -1,3 +1,4 @@
+from solver import GreedyCPU
 class DivideAndConquerSolver:
     """
     A Divide and Conquer solver that recursively splits the board
