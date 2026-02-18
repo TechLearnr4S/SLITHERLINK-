@@ -5,9 +5,6 @@ from model import GameModel
 from solver import GreedyCPU
 
 
-
-
-
 # ---------------------------
 # SlitherlinkGame: Tkinter UI (same layout & behavior)
 # ---------------------------
@@ -127,7 +124,7 @@ class SlitherlinkGame:
         themed_button(inner_controls, text="Restart Game", command=self.on_restart_game).pack(side=tk.LEFT, padx=6)
         themed_button(inner_controls, text="Undo Move", command=self.on_undo_move).pack(side=tk.LEFT, padx=6)
         themed_button(inner_controls, text="Redo Move", command=self.on_redo_move).pack(side=tk.LEFT, padx=6)
-        themed_button(inner_controls, text="Solve Game (Greedy)", command=self.on_solve_game).pack(side=tk.LEFT, padx=6)
+        themed_button(inner_controls, text="Solve Game", command=self.on_solve_game).pack(side=tk.LEFT, padx=6)
         # Added Exit button at the end (does not remove or rearrange existing buttons)
         themed_button(inner_controls, text="Exit", command=self.root.destroy).pack(side=tk.LEFT, padx=6)
 
