@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 from graph import are_adjacent, normalize_edge
 from model import GameModel
+from solver import GreedyCPU
 
 # ---------------------------
 # GreedyCPU (unchanged external behavior)
