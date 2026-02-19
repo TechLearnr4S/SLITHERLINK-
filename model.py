@@ -108,7 +108,7 @@ class GameModel:
         return True
 
     # --- Node incident lookups ---
-
+    
     def incident_edges_for_node(self, node):
         """Return list of Edge objects incident to a Node (node can be Node or coord tuple)."""
         if isinstance(node, tuple):
