@@ -3,6 +3,7 @@ from tkinter import messagebox
 from graph import are_adjacent, normalize_edge
 from model import GameModel
 from solver import GreedyCPU
+from graph_solver import GraphDivideAndConquerSolver
 
 
 # ---------------------------
@@ -453,17 +454,29 @@ class SlitherlinkGame:
             self.status_var.set("CPU found no greedy move. Your move.")
 
     def on_solve_game(self):
-        moves = 0
+        # STEP 1: Create instance of GraphDivideAndConquerSolver
+        solver = GraphDivideAndConquerSolver(self.model)   # <--- NEW
+        
+        # STEP 2: Call solve()
+        dnc_moves = solver.solve()                         # <--- NEW (Structural Solve)
+        
+        # STEP 3: Greedy fallback (Original Logic)
+        fallback_moves = 0
         max_iterations = len(self.model.edges_list) + 10
         for _ in range(max_iterations):
             chosen = self.cpu.make_one_greedy_move()
             if chosen is None:
                 break
-            moves += 1
+            fallback_moves += 1
+            
+        # STEP 4: Update visuals
         self.update_edge_visuals()
         # ensure any red highlights are cleared after the solver runs
         self._clear_error_display()
-        self.status_var.set("Solve (greedy) applied {} moves.".format(moves))
+        
+        # STEP 5: Update status
+        # <--- NEW STATUS MESSAGE covering both solvers
+        self.status_var.set("Graph D&C applied {} moves. Greedy fallback applied {} moves.".format(dnc_moves, fallback_moves))
 
     def on_new_game(self):
         dialog = tk.Toplevel(self.root)
