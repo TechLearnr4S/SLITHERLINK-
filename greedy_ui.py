@@ -4,7 +4,7 @@ from graph import are_adjacent, normalize_edge
 from model import GameModel
 from solver import GreedyCPU
 from graph_solver import GraphDivideAndConquerSolver
-
+from naive_backtracking import NaiveBacktrackingSolver
 
 # ---------------------------
 # SlitherlinkGame: Tkinter UI (same layout & behavior)
@@ -125,7 +125,8 @@ class SlitherlinkGame:
         themed_button(inner_controls, text="Restart Game", command=self.on_restart_game).pack(side=tk.LEFT, padx=6)
         themed_button(inner_controls, text="Undo Move", command=self.on_undo_move).pack(side=tk.LEFT, padx=6)
         themed_button(inner_controls, text="Redo Move", command=self.on_redo_move).pack(side=tk.LEFT, padx=6)
-        themed_button(inner_controls, text="Solve Game", command=self.on_solve_game).pack(side=tk.LEFT, padx=6)
+        themed_button(inner_controls, text="Solve (Naive Backtracking)", command=self.on_solve_naive_instant).pack(side=tk.LEFT, padx=6)
+        themed_button(inner_controls, text="Visualize (Naive Backtracking)", command=self.on_solve_naive_visualize).pack(side=tk.LEFT, padx=6)
         # Added Exit button at the end (does not remove or rearrange existing buttons)
         themed_button(inner_controls, text="Exit", command=self.root.destroy).pack(side=tk.LEFT, padx=6)
 
@@ -172,8 +173,7 @@ class SlitherlinkGame:
         self.root.bind_all("<Control-Z>", lambda e: self.on_undo_move())
         self.root.bind_all("<Control-y>", lambda e: self.on_redo_move())
         self.root.bind_all("<Control-Y>", lambda e: self.on_redo_move())
-        self.root.bind_all("<Control-s>", lambda e: self.on_solve_game())
-        self.root.bind_all("<Control-S>", lambda e: self.on_solve_game())
+        
 
         self.canvas.bind("<Configure>", lambda e: self.draw_board())
 
@@ -453,30 +453,67 @@ class SlitherlinkGame:
         else:
             self.status_var.set("CPU found no greedy move. Your move.")
 
-    def on_solve_game(self):
-        # STEP 1: Create instance of GraphDivideAndConquerSolver
-        solver = GraphDivideAndConquerSolver(self.model)   # <--- NEW
-        
-        # STEP 2: Call solve()
-        dnc_moves = solver.solve()                         # <--- NEW (Structural Solve)
-        
-        # STEP 3: Greedy fallback (Original Logic)
-        fallback_moves = 0
-        max_iterations = len(self.model.edges_list) + 10
-        for _ in range(max_iterations):
-            chosen = self.cpu.make_one_greedy_move()
-            if chosen is None:
-                break
-            fallback_moves += 1
+    
+    def on_solve_naive_visualize(self):
+        # Disable restarting immediately if spamming
+        if self._animation_after_id is not None:
+            self.root.after_cancel(self._animation_after_id)
+            self._animation_after_id = None
             
-        # STEP 4: Update visuals
-        self.update_edge_visuals()
-        # ensure any red highlights are cleared after the solver runs
-        self._clear_error_display()
+        self.status_var.set("Starting Naive Backtracking visualization...")
         
-        # STEP 5: Update status
-        # <--- NEW STATUS MESSAGE covering both solvers
-        self.status_var.set("Graph D&C applied {} moves. Greedy fallback applied {} moves.".format(dnc_moves, fallback_moves))
+        edges_to_guess = self.model.unselected_edges()
+        solver = NaiveBacktrackingSolver(self.model)
+        
+        # Start the generator
+        generator = solver.solve_step_by_step(edges_to_guess)
+        
+        # Begin animation loop (delay in milliseconds)
+        delay_ms = 100 
+        self._animate_naive_backtracking(generator, delay_ms)
+
+    def on_solve_naive_instant(self):
+        # Cancel any ongoing animation
+        if self._animation_after_id is not None:
+            self.root.after_cancel(self._animation_after_id)
+            self._animation_after_id = None
+            
+        self.status_var.set("Running Instant Naive Backtracking... Please wait.")
+        self.root.update() # force UI refresh to show message
+        
+        edges_to_guess = self.model.unselected_edges()
+        solver = NaiveBacktrackingSolver(self.model)
+        
+        success = solver.instant_solve(edges_to_guess)
+        
+        self.update_edge_visuals()
+        self._clear_error_display()
+        if success:
+            self.status_var.set("Instant Naive Backtracking: Solved Successfully.")
+        else:
+            self.status_var.set("Instant Naive Backtracking: No solution found.")
+
+    def _animate_naive_backtracking(self, generator, delay_ms):
+        try:
+            msg, is_solved = next(generator)
+            
+            # Update UI state
+            self.update_edge_visuals()
+            self._clear_error_display()
+            self.status_var.set(msg)
+            
+            if is_solved:
+                self.status_var.set("Naive Backtracking: " + msg)
+                self._animation_after_id = None
+                return
+                
+            # Schedule next step
+            self._animation_after_id = self.root.after(delay_ms, self._animate_naive_backtracking, generator, delay_ms)
+            
+        except StopIteration:
+            self.status_var.set("Naive Backtracking Completed.")
+            self._animation_after_id = None
+            return
 
     def on_new_game(self):
         dialog = tk.Toplevel(self.root)
