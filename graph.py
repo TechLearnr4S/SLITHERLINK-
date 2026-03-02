@@ -69,32 +69,85 @@ def are_adjacent(a, b):
     dc = abs(a[1] - b[1])
     return (dr == 1 and dc == 0) or (dr == 0 and dc == 1)
 
+
 def generate_random_cell_numbers(rows, cols, blank_probability=0.4):
     """
-    Generate a rows x cols grid of cell clues.
-    None means blank.
-    Weighted distribution favors 2 and 3 for interesting puzzles.
+    Generate a rows x cols grid of cell clues that is guaranteed to have at least one valid solution.
+    It builds a single continuous simple cycle via random cell expansion, 
+    calculates the true edge counts, and hides some clues.
     """
-    numbers = []
-    for _ in range(rows):
-        row = []
-        for _ in range(cols):
-            if random.random() < blank_probability:
-                row.append(None)
+    
+    
+    start_r = random.randint(0, rows - 1)
+    start_c = random.randint(0, cols - 1)
+    
+    loop_edges = set()
+    
+    def add_cell_to_loop(r, c):
+        n1, n2 = (r, c), (r, c+1)
+        n3, n4 = (r+1, c), (r+1, c+1)
+        e_top = normalize_edge(n1, n2)
+        e_bottom = normalize_edge(n3, n4)
+        e_left = normalize_edge(n1, n3)
+        e_right = normalize_edge(n2, n4)
+        
+        for e in [e_top, e_bottom, e_left, e_right]:
+            if e in loop_edges:
+                loop_edges.remove(e)
             else:
-                vals = [0, 1, 2, 3]
-                weights = [0.1, 0.2, 0.4, 0.3]
-                total = 0.0
-                for w in weights:
-                    total += w
-                r = random.random() * total
-                cumulative = 0.0
-                picked = vals[-1]
-                for i in range(len(vals)):
-                    cumulative += weights[i]
-                    if r <= cumulative:
-                        picked = vals[i]
-                        break
-                row.append(picked)
-        numbers.append(row)
+                loop_edges.add(e)
+                
+    def get_loop_nodes():
+        nodes = set()
+        for e in loop_edges:
+            nodes.add(e[0])
+            nodes.add(e[1])
+        return nodes
+
+    add_cell_to_loop(start_r, start_c)
+    loop_nodes = get_loop_nodes()
+    cells_inside = {(start_r, start_c)}
+    
+    # Try to expand the loop by adding adjacent cells
+    for _ in range(rows * cols * 5): 
+        cr = random.randint(0, rows - 1)
+        cc = random.randint(0, cols - 1)
+        if (cr, cc) in cells_inside:
+            continue
+            
+        n1, n2 = (cr, cc), (cr, cc+1)
+        n3, n4 = (cr+1, cc), (cr+1, cc+1)
+        
+        nodes_in_loop = sum(1 for n in [n1, n2, n3, n4] if n in loop_nodes)
+        if nodes_in_loop == 2:
+            e_top = normalize_edge(n1, n2)
+            e_bottom = normalize_edge(n3, n4)
+            e_left = normalize_edge(n1, n3)
+            e_right = normalize_edge(n2, n4)
+            
+            shared_edges = sum(1 for e in [e_top, e_bottom, e_left, e_right] if e in loop_edges)
+            if shared_edges == 1:
+                add_cell_to_loop(cr, cc)
+                cells_inside.add((cr, cc))
+                loop_nodes = get_loop_nodes()
+                
+    # Loop generated! Now calculate truthful clues and blank some out
+    numbers = []
+    for r in range(rows):
+        row_numbers = []
+        for c in range(cols):
+            n1, n2 = (r, c), (r, c+1)
+            n3, n4 = (r+1, c), (r+1, c+1)
+            e_top = normalize_edge(n1, n2)
+            e_bottom = normalize_edge(n3, n4)
+            e_left = normalize_edge(n1, n3)
+            e_right = normalize_edge(n2, n4)
+            count = sum(1 for e in [e_top, e_bottom, e_left, e_right] if e in loop_edges)
+            
+            if random.random() < blank_probability:
+                row_numbers.append(None)
+            else:
+                row_numbers.append(count)
+        numbers.append(row_numbers)
+        
     return numbers
