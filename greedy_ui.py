@@ -44,6 +44,8 @@ class SlitherlinkGame:
     def __init__(self, root, rows=4, cols=4):
         self.root = root
         self.root.title("Slitherlink (Loopy) - Human vs Greedy CPU")
+        
+        self._animation_after_id = None
 
         # Make the window fullscreen at startup (requirement)
         try:
