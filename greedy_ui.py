@@ -5,6 +5,7 @@ from model import GameModel
 from solver import GreedyCPU
 from graph_solver import GraphDivideAndConquerSolver
 from naive_backtracking import NaiveBacktrackingSolver
+from greedy_assisted_backtracking import GreedyAssistedBacktrackingSolver
 
 # ---------------------------
 # SlitherlinkGame: Tkinter UI (same layout & behavior)
@@ -129,8 +130,11 @@ class SlitherlinkGame:
         themed_button(inner_controls, text="Redo Move", command=self.on_redo_move).pack(side=tk.LEFT, padx=6)
         themed_button(inner_controls, text="Solve (Naive Backtracking)", command=self.on_solve_naive_instant).pack(side=tk.LEFT, padx=6)
         themed_button(inner_controls, text="Visualize (Naive Backtracking)", command=self.on_solve_naive_visualize).pack(side=tk.LEFT, padx=6)
+        themed_button(inner_controls, text="Solve (Greedy Assisted)", command=self.on_solve_greedy_instant).pack(side=tk.LEFT, padx=6)
+        themed_button(inner_controls, text="Visualize (Greedy Assisted)", command=self.on_solve_greedy_visualize).pack(side=tk.LEFT, padx=6)
         # Added Exit button at the end (does not remove or rearrange existing buttons)
         themed_button(inner_controls, text="Exit", command=self.root.destroy).pack(side=tk.LEFT, padx=6)
+
 
         self.scale_var = tk.IntVar(value=self.cell_size)
         scale_frame = tk.Frame(control_frame, bg=self.CONTROL_BG)
@@ -516,6 +520,41 @@ class SlitherlinkGame:
             self.status_var.set("Naive Backtracking Completed.")
             self._animation_after_id = None
             return
+        
+    # INSERT THESE NEW METHODS:
+    def on_solve_greedy_visualize(self):
+        if self._animation_after_id is not None:
+            self.root.after_cancel(self._animation_after_id)
+            self._animation_after_id = None
+            
+        self.status_var.set("Starting Greedy-Assisted Backtracking visualization...")
+        
+        edges_to_guess = self.model.unselected_edges()
+        solver = GreedyAssistedBacktrackingSolver(self.model)
+        
+        generator = solver.solve_step_by_step(edges_to_guess)
+        delay_ms = 40 # Set delay shorter here as Greedy takes fewer steps
+        self._animate_naive_backtracking(generator, delay_ms)
+
+    def on_solve_greedy_instant(self):
+        if self._animation_after_id is not None:
+            self.root.after_cancel(self._animation_after_id)
+            self._animation_after_id = None
+            
+        self.status_var.set("Running Instant Greedy-Assisted Backtracking... Please wait.")
+        self.root.update() 
+        
+        edges_to_guess = self.model.unselected_edges()
+        solver = GreedyAssistedBacktrackingSolver(self.model)
+        
+        success = solver.instant_solve(edges_to_guess)
+        
+        self.update_edge_visuals()
+        self._clear_error_display()
+        if success:
+            self.status_var.set("Greedy-Assisted Backtracking: Solved Successfully.")
+        else:
+            self.status_var.set("Greedy-Assisted Backtracking: No solution found.")
 
     def on_new_game(self):
         dialog = tk.Toplevel(self.root)
