@@ -458,14 +458,43 @@ class SlitherlinkGame:
     # --- CPU / solve / buttons handlers (unchanged behavior) ---
 
     def cpu_move_after_human(self):
-        chosen = self.cpu.make_one_greedy_move()
-        if chosen is not None:
-            # after CPU move, ensure cells are rendered normally
+        edges_to_guess = self.model.unselected_edges()
+        
+        # 1. Snapshot edge states before backtracking corrupts the UI board
+        snapshot = []
+        for e in self.model.edges_list:
+            snapshot.append((e, e.selected, getattr(e, '_bt_state', -1)))
+            
+        # 2. Run the MRV Solver into the future
+        solver = MRVPruningBacktrackingSolver(self.model)
+        success = solver.instant_solve(edges_to_guess)
+        
+        # 3. If a solution exists, extract the very next edge needed
+        chosen_edge = None
+        if success:
+            for e in edges_to_guess:
+                if e.selected == 1:
+                    chosen_edge = e
+                    break
+                    
+        # 4. Revert the solver's hypothetical work so the UI doesn't visually glitch
+        for (e, old_sel, old_bt) in snapshot:
+            e.selected = old_sel
+            e._bt_state = old_bt
+            
+        # 5. Play the edge physically on the real board or rollback the human!
+        if success and chosen_edge:
+            self.model.select_edge_by_cpu(chosen_edge)
             self.update_edge_visuals()
             self._clear_error_display()
-            self.status_var.set("CPU selected edge {}. Your move.".format(chosen.endpoints_tuple()))
+            self.status_var.set(f"CPU looked ahead and selected edge {chosen_edge.endpoints_tuple()}. Your move.")
+        elif success and not chosen_edge:
+            self.status_var.set("Board is solved! Great job.")
         else:
-            self.status_var.set("CPU found no greedy move. Your move.")
+            # Auto-backtrack: The human screwed up
+            self.on_undo_move()
+            self.status_var.set("Dead End! CPU detected an unsolvable state and auto-backtracked.")
+
 
     
     def on_solve_naive_visualize(self):
