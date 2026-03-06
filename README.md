@@ -1,6 +1,6 @@
-# Slitherlink (Loopy) – Human vs Greedy CPU
+# Slitherlink (Loopy) – Human vs Advanced Solvers
 
-This project is a Python implementation of the classic **Slitherlink (Loopy)** logic puzzle using **graph representation** and a **greedy algorithm**, with an interactive **Tkinter GUI**. The game allows a **human player** to play against a **Greedy CPU**, where the CPU applies local forced rules to make decisions.
+This project is a Python implementation of the classic **Slitherlink (Loopy)** logic puzzle using **graph representation** and various algorithmic solvers, with an interactive **Tkinter GUI**. The game allows a **human player** to play against or observe different CPU solvers, ranging from simple Greedy logic to advanced Constraint-Satisfaction Backtracking.
 
 ---
 
@@ -22,8 +22,10 @@ This project is a Python implementation of the classic **Slitherlink (Loopy)** l
 ## Key Concepts Used
 
 - Graph representation using **adjacency lists**
-- Greedy algorithm
-- Constraint-based decision making
+- Disjoint-Set Data Structures (**Union-Find**)
+- **Greedy Logic** and local forced deductions
+- **Divide and Conquer** (Geometrical & Connected Component topology)
+- **Constraint Satisfaction Problem (CSP) Backtracking** (Naive, Greedy-Assisted, & MRV Pruning)
 - Undo / Redo using stacks
 - Event-driven GUI using Tkinter
 
@@ -31,7 +33,7 @@ This project is a Python implementation of the classic **Slitherlink (Loopy)** l
 
 ## Project Structure
 
-The implementation is logically divided into three main parts:
+The implementation is logically divided into several main parts:
 
 ### 1. Graph Representation
 - `Node` represents a grid intersection.
@@ -44,14 +46,12 @@ The implementation is logically divided into three main parts:
 - Enforces blocking rules and constraints.
 - Handles undo and redo operations.
 
-### 3. Greedy CPU
+### 3. CPU Solvers
 
-The CPU makes **one move per turn** using:
-
-1. **Forced completion rule**: If a numbered cell has `k-1` selected edges and only one valid edge left, that edge is selected.
-2. **Fallback rule**: Selects a valid unblocked edge, prioritizing edges near higher-numbered cells.
-
-⚠️ This is a **pure greedy approach** and does not guarantee a complete solution for all puzzles.
+The application features multiple solver algorithms that can be invoked:
+1. **Greedy CPU**: Applies forced local completion rules and makes safe safe edge deductions.
+2. **Divide and Conquer**: Breaks the board into sub-regions (either Geometrically or via Connected Components) to solve locally.
+3. **Backtracking Solvers**: Deep search algorithms (Naive, Greedy-Assisted, MRV Pruning) that can guarantee solutions for highly ambiguous board states.
 
 ---
 
@@ -59,7 +59,8 @@ The CPU makes **one move per turn** using:
 
 - Fullscreen Tkinter window
 - Centered grid and control panel
-- Zoom slider to resize the board
+- Interactive solver controls with instant or step-by-step visualization
+- Configurable board generation sizes
 - Color-coded edges:
   - Blue → Human
   - Green → CPU
@@ -85,7 +86,7 @@ The CPU makes **one move per turn** using:
 
 ### Requirements
 - Python 3.x
-- Tkinter (comes with standard Python)
+- Tkinter (comes with standard Python requirements)
 
 ### Run Command
 ```bash
@@ -96,22 +97,22 @@ python main.py
 
 ## Individual Contributions
 
-**Shiva Shanmugan S S – Graph & Utility Functions**
-- Designed Node and Edge classes
-- Implemented adjacency list representation
-- Developed helper utilities such as edge normalization and adjacency checks
+**Shiva Shanmugan S S (Member 1)**
+- Graph structure and Graph Utility Classes.
+- Implemented Divide and Conquer using Connected Components algorithm.
+- Implemented Naive Backtracking algorithm.
 
-**Shri Aishwarya P – Game Model & Constraints**
-- Implemented the GameModel class
-- Enforced Slitherlink rules and blocking logic
-- Added undo/redo functionality using stacks
-- Managed game state and board reset logic
+**Shri Aishwarya P (Member 2)**
+- Implemented the Game Model.
+- Enforced constraint mechanics and Undo/Redo logic.
+- Implemented Geometrical Divide and Conquer algorithm.
+- Implemented State-of-the-Art MRV Pruning Backtracking algorithm.
 
-**Sania S – Greedy Algorithm & UI**
-- Designed and implemented the Greedy CPU strategy
-- Integrated automatic CPU moves after each human move
-- Built the Tkinter-based user interface
-- Added visual feedback, controls, and keyboard shortcuts
+**Sania S (Member 3)**
+- Implemented Greedy Logic engine.
+- Implemented the Union-Find data structure implementation.
+- Implemented Greedy-Assisted Backtracking algorithm.
+- Built the Tkinter-based User Interface (UI).
 
 ---
 
