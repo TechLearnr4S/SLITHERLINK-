@@ -70,18 +70,6 @@ The application features multiple solver algorithms that can be invoked:
 
 ---
 
-## Keyboard Shortcuts
-
-| Shortcut | Action |
-|----------|--------|
-| Ctrl + N | New Game |
-| Ctrl + R | Restart Game |
-| Ctrl + Z | Undo |
-| Ctrl + Y | Redo |
-| Ctrl + S | Solve (Greedy) |
-
----
-
 ## How to Run
 
 ### Requirements
