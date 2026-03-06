@@ -68,6 +68,7 @@ The application features multiple solver algorithms that can be invoked:
 - Undo / Redo support
 - Keyboard shortcuts
 
+
 ---
 
 ## How to Run
@@ -85,18 +86,18 @@ python main.py
 
 ## Individual Contributions
 
-**Shiva Shanmugan S S (Member 1)**
+**Shiva Shanmugan S S - CB.SC.U4CSE24049**
 - Graph structure and Graph Utility Classes.
 - Implemented Divide and Conquer using Connected Components algorithm.
 - Implemented Naive Backtracking algorithm.
 
-**Shri Aishwarya P (Member 2)**
+**Shri Aishwarya P - CB.SC.U4CSE24050**
 - Implemented the Game Model.
 - Enforced constraint mechanics and Undo/Redo logic.
 - Implemented Geometrical Divide and Conquer algorithm.
 - Implemented State-of-the-Art MRV Pruning Backtracking algorithm.
 
-**Sania S (Member 3)**
+**Sania S - CB.SC.U4CSE24046**
 - Implemented Greedy Logic engine.
 - Implemented the Union-Find data structure implementation.
 - Implemented Greedy-Assisted Backtracking algorithm.
